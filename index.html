@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>QR Code Generator</h1>
+        <p class="subtitle">Create custom QR codes for various purposes</p>
+
+        <div class="qr-generator-card">
+            <nav class="tab-nav">
+                <button class="tab-btn active" data-tab="url">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                    </svg>
+                    URL
+                </button>
+                <button class="tab-btn" data-tab="text">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    Text
+                </button>
+                <button class="tab-btn" data-tab="contact">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Contact
+                </button>
+                <button class="tab-btn" data-tab="wifi">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                        <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                        <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                        <line x1="12" y1="20" x2="12" y2="20"></line>
+                    </svg>
+                    WiFi
+                </button>
+                <button class="tab-btn" data-tab="email">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    Email
+                </button>
+            </nav>
+
+            <div class="tab-content">
+                <div id="url-tab" class="tab-pane active">
+                    <div class="input-group">
+                        <label for="url-input">Enter URL</label>
+                        <input type="url" id="url-input" class="input" placeholder="https://example.com">
+                    </div>
+                </div>
+
+                <div id="text-tab" class="tab-pane">
+                    <div class="input-group">
+                        <label for="text-input">Enter Text</label>
+                        <textarea id="text-input" class="input" rows="4" placeholder="Enter your text here"></textarea>
+                    </div>
+                </div>
+
+                <div id="contact-tab" class="tab-pane">
+                    <div class="input-group">
+                        <label for="contact-name">Name</label>
+                        <input type="text" id="contact-name" class="input" placeholder="John Doe">
+                    </div>
+                    <div class="input-group">
+                        <label for="contact-phone">Phone</label>
+                        <input type="tel" id="contact-phone" class="input" placeholder="+1234567890">
+                    </div>
+                    <div class="input-group">
+                        <label for="contact-email">Email</label>
+                        <input type="email" id="contact-email" class="input" placeholder="john@example.com">
+                    </div>
+                </div>
+
+                <div id="wifi-tab" class="tab-pane">
+                    <div class="input-group">
+                        <label for="wifi-ssid">Network Name (SSID)</label>
+                        <input type="text" id="wifi-ssid" class="input" placeholder="WiFi Network Name">
+                    </div>
+                    <div class="input-group">
+                        <label for="wifi-password">Password</label>
+                        <input type="text" id="wifi-password" class="input" placeholder="Network Password">
+                    </div>
+                </div>
+
+                <div id="email-tab" class="tab-pane">
+                    <div class="input-group">
+                        <label for="email-to">Email Address</label>
+                        <input type="email" id="email-to" class="input" placeholder="recipient@example.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="email-subject">Subject</label>
+                        <input type="text" id="email-subject" class="input" placeholder="Email subject">
+                    </div>
+                    <div class="input-group">
+                        <label for="email-body">Message</label>
+                        <textarea id="email-body" class="input" rows="4" placeholder="Email message"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="options-section">
+                <div class="option-group">
+                    <label for="qr-size">Size</label>
+                    <div class="size-control">
+                        <input type="range" id="qr-size" min="100" max="400" value="200">
+                        <span id="size-value">200×200</span>
+                    </div>
+                </div>
+                
+                <div class="option-group">
+                    <label for="qr-color">QR Color</label>
+                    <input type="color" id="qr-color" value="#000000">
+                </div>
+                
+                <div class="option-group">
+                    <label for="qr-bg-color">Background Color</label>
+                    <input type="color" id="qr-bg-color" value="#FFFFFF">
+                </div>
+            </div>
+
+            <div class="preview-section">
+                <div id="qr-preview">
+                    <p class="placeholder-text">Enter data to generate QR code</p>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button id="download-png" class="btn btn-primary" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download PNG
+                </button>
+                <button id="download-svg" class="btn btn-primary" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download SVG
+                </button>
+                <button id="clear-button" class="btn btn-danger">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Clear
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">Copied to clipboard!</div>
+    <script src="script.js"></script>
+</body>
+</html>
