@@ -1,22 +1,28 @@
 const validateInput = (activeTab) => {
-    switch (activeTab) {
-        case 'url':
-            const urlInput = document.getElementById('url-input').value;
-            return urlInput.trim() !== '' && /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/.test(urlInput);
-        case 'text':
-            return document.getElementById('text-input').value.trim() !== '';
-        case 'contact':
-            const name = document.getElementById('contact-name').value.trim();
-            const phone = document.getElementById('contact-phone').value.trim();
-            const email = document.getElementById('contact-email').value.trim();
-            return name !== '' || phone !== '' || (email !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
-        case 'wifi':
-            return document.getElementById('wifi-ssid').value.trim() !== '';
-        case 'email':
-            const toEmail = document.getElementById('email-to').value.trim();
-            return toEmail !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(toEmail);
-        default:
-            return false;
+    try {
+        switch (activeTab) {
+            case 'url':
+                const urlInput = document.getElementById('url-input').value;
+                return urlInput.trim() !== '' && /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/.test(urlInput);
+            case 'text':
+                return document.getElementById('text-input').value.trim() !== '';
+            case 'contact':
+                const name = document.getElementById('contact-name').value.trim();
+                const phone = document.getElementById('contact-phone').value.trim();
+                const email = document.getElementById('contact-email').value.trim();
+                return name !== '' || phone !== '' || (email !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+            case 'wifi':
+                const ssid = document.getElementById('wifi-ssid').value.trim();
+                return ssid !== '';
+            case 'email':
+                const toEmail = document.getElementById('email-to').value.trim();
+                return toEmail !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(toEmail);
+            default:
+                return false;
+        }
+    } catch (error) {
+        console.error('Validation error:', error);
+        return false;
     }
 };
 
@@ -72,25 +78,64 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const content = getQRContent();
-        qrPreview.innerHTML = '';
-
+        
         if (content) {
-            if (qrCode) {
-                qrCode.clear();
-                qrCode.makeCode(content);
-            } else {
-                qrCode = new QRCode(qrPreview, {
-                    text: content,
-                    width: qrOptions.width,
-                    height: qrOptions.height,
-                    colorDark: qrOptions.colorDark,
-                    colorLight: qrOptions.colorLight,
-                    correctLevel: QRCode.CorrectLevel.H
-                });
+            try {
+                // Clear previous QR code
+                qrPreview.innerHTML = '';
+                
+                // Create new QR code instance
+                const typeNumber = 0;
+                const errorCorrectionLevel = 'H';
+                const qr = qrcode(typeNumber, errorCorrectionLevel);
+                qr.addData(content);
+                qr.make();
+                
+                // Create canvas for custom coloring
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = qrOptions.width;
+                canvas.height = qrOptions.height;
+                
+                // Set background color
+                ctx.fillStyle = qrOptions.colorLight;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw QR code
+                const moduleCount = qr.getModuleCount();
+                const moduleSize = Math.floor(qrOptions.width / moduleCount);
+                const offsetX = Math.floor((qrOptions.width - moduleSize * moduleCount) / 2);
+                const offsetY = Math.floor((qrOptions.height - moduleSize * moduleCount) / 2);
+                
+                ctx.fillStyle = qrOptions.colorDark;
+                
+                for (let row = 0; row < moduleCount; row++) {
+                    for (let col = 0; col < moduleCount; col++) {
+                        if (qr.isDark(row, col)) {
+                            ctx.fillRect(
+                                offsetX + col * moduleSize,
+                                offsetY + row * moduleSize,
+                                moduleSize,
+                                moduleSize
+                            );
+                        }
+                    }
+                }
+                
+                // Convert to image and display
+                const qrImage = new Image();
+                qrImage.src = canvas.toDataURL('image/png');
+                qrPreview.appendChild(qrImage);
+                
+                downloadPng.disabled = false;
+                downloadSvg.disabled = false;
+                
+            } catch (error) {
+                console.error('Error generating QR code:', error);
+                qrPreview.innerHTML = '<p class="placeholder-text">Error generating QR code</p>';
+                downloadPng.disabled = true;
+                downloadSvg.disabled = true;
             }
-
-            downloadPng.disabled = false;
-            downloadSvg.disabled = false;
         } else {
             qrPreview.innerHTML = '<p class="placeholder-text">Enter data to generate QR code</p>';
             downloadPng.disabled = true;
@@ -119,9 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // QR code options event listeners
     document.getElementById('qr-size').addEventListener('input', (e) => {
-        qrOptions.width = parseInt(e.target.value);
-        qrOptions.height = parseInt(e.target.value);
-        sizeValue.textContent = `${qrOptions.width}×${qrOptions.height}`;
+        // Round to nearest multiple of 50
+        const roundedValue = Math.round(parseInt(e.target.value) / 50) * 50;
+        e.target.value = roundedValue; // Update slider value
+
+        qrOptions.width = roundedValue;
+        qrOptions.height = roundedValue;
+        sizeValue.textContent = `${roundedValue}×${roundedValue}`;
         generateQR();
     });
 
@@ -137,26 +186,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Download functions
     const downloadQR = (format) => {
-        if (!qrCode) return;
+        const qrImage = qrPreview.querySelector('img');
+        if (!qrImage) return;
 
-        const canvas = qrPreview.querySelector('canvas');
-        const svg = qrPreview.querySelector('svg');
-        const fileName = `qr-code-${activeTab}-${new Date().getTime()}`;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = qrOptions.width;
+        canvas.height = qrOptions.height;
 
-        if (format === 'png' && canvas) {
+        // Draw QR code on canvas
+        ctx.fillStyle = qrOptions.colorLight;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const img = new Image();
+        img.onload = () => {
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            const fileName = `qr-code-${activeTab}-${new Date().getTime()}`;
             const link = document.createElement('a');
-            link.download = `${fileName}.png`;
-            link.href = canvas.toDataURL('image/png');
+
+            if (format === 'png') {
+                link.download = `${fileName}.png`;
+                link.href = canvas.toDataURL('image/png');
+            } else if (format === 'svg') {
+                // Convert to SVG
+                const svgData = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}">
+                        <image href="${canvas.toDataURL('image/png')}" width="100%" height="100%"/>
+                    </svg>
+                `;
+                const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                link.download = `${fileName}.svg`;
+                link.href = URL.createObjectURL(svgBlob);
+            }
+
             link.click();
-        } else if (format === 'svg' && svg) {
-            const svgData = new XMLSerializer().serializeToString(svg);
-            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
-            const link = document.createElement('a');
-            link.download = `${fileName}.svg`;
-            link.href = URL.createObjectURL(svgBlob);
-            link.click();
-            URL.revokeObjectURL(link.href);
-        }
+            if (format === 'svg') {
+                URL.revokeObjectURL(link.href);
+            }
+        };
+        img.src = qrImage.src;
     };
 
     // Clear all inputs
@@ -175,3 +244,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize
     generateQR();
 });
+
+// Helper function to convert hex to RGB
+const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+};

@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Generator</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 </head>
+
 <body>
     <div class="container">
         <h1>QR Code Generator</h1>
@@ -113,16 +115,16 @@
                 <div class="option-group">
                     <label for="qr-size">Size</label>
                     <div class="size-control">
-                        <input type="range" id="qr-size" min="100" max="400" value="200">
+                        <input type="range" id="qr-size" min="100" max="400" step="50" value="200">
                         <span id="size-value">200×200</span>
                     </div>
                 </div>
-                
+
                 <div class="option-group">
                     <label for="qr-color">QR Color</label>
                     <input type="color" id="qr-color" value="#000000">
                 </div>
-                
+
                 <div class="option-group">
                     <label for="qr-bg-color">Background Color</label>
                     <input type="color" id="qr-bg-color" value="#FFFFFF">
@@ -166,4 +168,5 @@
     <div id="toast" class="toast">Copied to clipboard!</div>
     <script src="script.js"></script>
 </body>
+
 </html>
