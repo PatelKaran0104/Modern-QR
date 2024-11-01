@@ -409,6 +409,27 @@ input[type="range"]::-webkit-slider-thumb {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+    position: relative;
+}
+
+.preview-section::after {
+    content: "Click to copy";
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.preview-section:hover::after {
+    opacity: 1;
 }
 
 #qr-preview {
@@ -472,9 +493,9 @@ input[type="range"]::-webkit-slider-thumb {
 
 .toast {
     position: fixed;
-    bottom: 20px;
+    top: 20px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(-100px);
     background-color: var(--primary-color);
     color: #fff;
     padding: 0.75rem 1.5rem;
@@ -484,6 +505,13 @@ input[type="range"]::-webkit-slider-thumb {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     display: none;
     z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.toast.show-toast {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
 }
 
 .sr-only {
@@ -536,5 +564,11 @@ input[type="range"]::-webkit-slider-thumb {
 
     .btn {
         width: 100%;
+    }
+}
+
+@media (hover: none) {
+    .preview-section::after {
+        content: "Tap to copy";
     }
 }

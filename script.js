@@ -289,6 +289,64 @@ document.addEventListener('DOMContentLoaded', () => {
         customColorBtn.classList.add('active');
         generateQR();
     });
+
+    // Add this function after the existing touch event listeners
+    const copyQRToClipboard = async () => {
+        const canvas = document.querySelector('#qr-preview canvas');
+        if (!canvas || document.querySelector('#qr-preview .placeholder-text')) return;
+
+        try {
+            const blob = await new Promise(resolve => canvas.toBlob(resolve));
+            await navigator.clipboard.write([
+                new ClipboardItem({
+                    'image/png': blob
+                })
+            ]);
+            showToast('QR code copied to clipboard!');
+        } catch (err) {
+            console.error('Failed to copy:', err);
+            showToast('Failed to copy QR code');
+        }
+    };
+
+    // Add this function to handle toast messages
+    const showToast = (message) => {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.style.display = 'block';
+        
+        // Add animation class
+        toast.classList.add('show-toast');
+
+        setTimeout(() => {
+            toast.classList.remove('show-toast');
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 300);
+        }, 2000);
+    };
+
+    // Modify the existing touch event listeners
+    qrPreview.addEventListener('click', (e) => {
+        const canvas = document.querySelector('#qr-preview canvas');
+        if (canvas && !document.querySelector('#qr-preview .placeholder-text')) {
+            copyQRToClipboard();
+        }
+    });
+
+    // Update the touchend event listener
+    qrPreview.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+
+        // If it's more of a tap than a swipe
+        if (Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
+            copyQRToClipboard();
+        }
+    });
 });
 
 // Helper function to convert hex to RGB
