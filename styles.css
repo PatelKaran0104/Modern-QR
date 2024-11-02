@@ -527,6 +527,18 @@ input[type="range"]::-webkit-slider-thumb {
     border: 0;
 }
 
+@media (max-width: 1200px) {
+    .container {
+        max-width: 100%;
+        padding: var(--spacing-md);
+    }
+    
+    .generator-layout {
+        grid-template-columns: 1.5fr 1fr;
+        gap: var(--spacing-md);
+    }
+}
+
 @media (max-width: 1024px) {
     .generator-layout {
         grid-template-columns: 1fr;
@@ -534,42 +546,128 @@ input[type="range"]::-webkit-slider-thumb {
 
     .preview-container {
         position: static;
-        min-height: auto;
+        min-height: 400px;
+    }
+
+    .qr-generator-card {
+        margin-top: var(--spacing-md);
+        padding: var(--spacing-md);
     }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+    h1 {
+        font-size: 1.75rem;
+    }
 
-    .container,
-    .input-section,
-    .qr-generator-card {
-        padding: var(--spacing-md);
+    .subtitle {
+        font-size: 0.875rem;
     }
 
     .tab-nav {
         flex-wrap: wrap;
+        gap: 0.5rem;
     }
 
     .tab-btn {
-        flex: 1 0 calc(50% - var(--spacing-base));
+        flex: 1 0 calc(33.333% - 0.5rem);
+        padding: 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .tab-btn svg {
+        width: 16px;
+        height: 16px;
     }
 
     .options-row {
         flex-direction: column;
-        gap: var(--spacing-lg);
+        gap: var(--spacing-md);
+    }
+
+    .pattern-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+    }
+
+    .pattern-btn {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .pattern-preview {
+        width: 36px;
+        height: 36px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-base);
+    }
+
+    .qr-generator-card,
+    .input-section,
+    .preview-container {
+        padding: var(--spacing-base);
+    }
+
+    .tab-btn {
+        flex: 1 0 calc(50% - 0.25rem);
+    }
+
+    .color-presets {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .color-preset {
+        width: 32px;
+        height: 32px;
+    }
+
+    .pattern-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.25rem;
+    }
+
+    .pattern-btn {
+        padding: 0.5rem 0.25rem;
+    }
+
+    .pattern-btn span {
+        font-size: 0.75rem;
     }
 
     .action-buttons {
         flex-direction: column;
+        gap: 0.5rem;
     }
 
     .btn {
         width: 100%;
+        padding: 0.625rem 1rem;
+    }
+
+    .input-group {
+        margin-bottom: 0.75rem;
+    }
+
+    .input {
+        padding: 0.625rem;
+        font-size: 0.875rem;
     }
 }
 
+/* Touch-specific styles */
 @media (hover: none) {
-    .preview-section::after {
-        content: "Tap to copy";
+    .tab-btn:hover,
+    .pattern-btn:hover,
+    .color-preset:hover,
+    .btn:hover {
+        transform: none;
+    }
+
+    .input:focus {
+        box-shadow: none;
     }
 }
