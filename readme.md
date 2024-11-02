@@ -79,31 +79,6 @@ The project uses:
 - QR Code Generator library
 - Responsive design principles
 
-Key files:
-- HTML structure: 
-```html:index.html
-startLine: 1
-endLine: 241
-```
-- JavaScript functionality:
-```javascript:script.js
-startLine: 1
-endLine: 533
-```
-- Styling:
-```css:styles.css
-startLine: 1
-endLine: 575
-```
-
-## 🔒 Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Mobile browsers
-
 ## 📝 License
 
 MIT License - feel free to use this project for personal or commercial purposes.
