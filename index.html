@@ -7,10 +7,10 @@
     <title>QR Code Generator</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
-    
-    <link rel="icon" type="image/x-icon" href="favicon_logo/favicon.ico">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon_logo/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon_logo/favicon-32x32.png">
+
+    <link rel="icon" type="image/x-icon" href="favicon_io/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon_io/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon_io/favicon-32x32.png">
 </head>
 
 <body>
@@ -95,6 +95,19 @@
                                 <label for="contact-email">Email</label>
                                 <input type="email" id="contact-email" class="input" placeholder="john@example.com">
                             </div>
+                            <div class="input-group">
+                                <label for="contact-address">Address</label>
+                                <input type="text" id="contact-address" class="input" placeholder="1234 Main St">
+                            </div>
+                            <div class="input-group">
+                                <label for="contact-url">Website</label>
+                                <input type="url" id="contact-url" class="input" placeholder="https://example.com">
+                            </div>
+                            <div class="input-group">
+                                <label for="contact-note">Note</label>
+                                <textarea id="contact-note" class="input" rows="4"
+                                    placeholder="Additional notes"></textarea>
+                            </div>
                         </div>
 
                         <div id="wifi-tab" class="tab-pane">
@@ -105,6 +118,13 @@
                             <div class="input-group">
                                 <label for="wifi-password">Password</label>
                                 <input type="text" id="wifi-password" class="input" placeholder="Network Password">
+                            </div>
+                            <div class="input-group">
+                                <label for="wifi-encryption">Encryption Type</label>
+                                <select id="wifi-encryption" class="input">
+                                    <option value="WPA">WPA</option>
+                                    <option value="WEP">WEP</option>
+                                </select>
                             </div>
                         </div>
 

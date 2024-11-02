@@ -1,3 +1,4 @@
+// Validate input based on the active tab
 const validateInput = (activeTab) => {
     try {
         switch (activeTab) {
@@ -10,7 +11,9 @@ const validateInput = (activeTab) => {
                 const name = document.getElementById('contact-name').value.trim();
                 const phone = document.getElementById('contact-phone').value.trim();
                 const email = document.getElementById('contact-email').value.trim();
-                return name !== '' || phone !== '' || (email !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+                const address = document.getElementById('contact-address').value.trim();
+                const url = document.getElementById('contact-url').value.trim();
+                return name !== '' || phone !== '' || (email !== '' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) || address !== '' || url !== '';
             case 'wifi':
                 const ssid = document.getElementById('wifi-ssid').value.trim();
                 return ssid !== '';
@@ -26,7 +29,7 @@ const validateInput = (activeTab) => {
     }
 };
 
-// Move getQRContent outside of DOMContentLoaded
+// Get the QR code content based on the active tab
 const getQRContent = () => {
     switch (activeTab) {
         case 'url':
@@ -37,11 +40,15 @@ const getQRContent = () => {
             const name = document.getElementById('contact-name').value;
             const phone = document.getElementById('contact-phone').value;
             const email = document.getElementById('contact-email').value;
-            return `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL:${phone}\nEMAIL:${email}\nEND:VCARD`;
+            const address = document.getElementById('contact-address').value;
+            const url = document.getElementById('contact-url').value;
+            const note = document.getElementById('contact-note').value;
+            return `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL:${phone}\nEMAIL:${email}\nADR:${address}\nURL:${url}\nNOTE:${note}\nEND:VCARD`;
         case 'wifi':
             const ssid = document.getElementById('wifi-ssid').value;
             const password = document.getElementById('wifi-password').value;
-            return `WIFI:T:WPA;S:${ssid};P:${password};;`;
+            const encryption = document.getElementById('wifi-encryption').value;
+            return `WIFI:T:${encryption};S:${ssid};P:${password};;`;
         case 'email':
             const toEmail = document.getElementById('email-to').value;
             const subject = document.getElementById('email-subject').value;
@@ -52,7 +59,6 @@ const getQRContent = () => {
     }
 };
 
-// Also move activeTab declaration outside
 let activeTab = 'url';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -71,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         colorLight: '#FFFFFF'
     };
 
+    // Generate QR code
     const generateQR = () => {
         if (!validateInput(activeTab)) {
             qrPreview.innerHTML = '<p class="placeholder-text">Enter valid data to generate QR code</p>';
@@ -136,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Draw the QR code modules
     const drawQRModule = (ctx, x, y, size) => {
         switch (activePattern) {
             case 'dots':
@@ -229,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Add tab switching functionality
+    // Tab switching functionality
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -243,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Add clear button functionality
+    // Clear button functionality
     document.getElementById('clear-button').addEventListener('click', () => {
         document.querySelectorAll('.input').forEach(input => {
             input.value = '';
@@ -256,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
         downloadSvg.disabled = true;
     });
 
-    // Add download functionality
+    // Download functionality
     downloadPng.addEventListener('click', () => {
         const canvas = qrPreview.querySelector('canvas');
         if (canvas) {
@@ -267,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Add input event listeners for all input fields
+    // Input event listeners for all input fields
     document.querySelectorAll('.input').forEach(input => {
         input.addEventListener('input', generateQR);
     });
@@ -275,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial QR generation
     generateQR();
 
-    // Add this to your DOMContentLoaded event listener
+    // Custom color input
     const qrColorInput = document.getElementById('qr-color');
     const customColorBtn = document.getElementById('custom-color-btn');
 
@@ -290,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
         generateQR();
     });
 
-    // Add this function after the existing touch event listeners
+    // Copy QR code to clipboard
     const copyQRToClipboard = async () => {
         const canvas = document.querySelector('#qr-preview canvas');
         if (!canvas || document.querySelector('#qr-preview .placeholder-text')) return;
@@ -309,12 +317,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Add this function to handle toast messages
+    // Toast messages
     const showToast = (message) => {
         const toast = document.getElementById('toast');
         toast.textContent = message;
         toast.style.display = 'block';
-        
+
         // Add animation class
         toast.classList.add('show-toast');
 
@@ -326,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 2000);
     };
 
-    // Modify the existing touch event listeners
+    // Touch event listeners
     qrPreview.addEventListener('click', (e) => {
         const canvas = document.querySelector('#qr-preview canvas');
         if (canvas && !document.querySelector('#qr-preview .placeholder-text')) {
@@ -334,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Update the touchend event listener
+    // Touch event listener
     qrPreview.addEventListener('touchend', (e) => {
         const touchEndX = e.changedTouches[0].clientX;
         const touchEndY = e.changedTouches[0].clientY;
@@ -375,7 +383,7 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Add touch support for mobile devices
+// Touch support for mobile devices
 const qrPreview = document.getElementById('qr-preview');
 let touchStartX = 0;
 let touchStartY = 0;
@@ -426,7 +434,7 @@ const downloadQRCode = () => {
     link.click();
 }
 
-// Add error handling
+// Error handling
 window.onerror = function (msg, url, lineNo, columnNo, error) {
     console.error('Error: ', msg, '\nURL: ', url, '\nLine: ', lineNo, '\nColumn: ', columnNo, '\nError object: ', error);
     alert('An error occurred. Please try again later.');
@@ -460,14 +468,14 @@ const downloadSvg = () => {
     svg.setAttribute('viewBox', `0 0 ${svgSize} ${svgSize}`);
     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 
-    // Add white background
+    // White background
     const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
     background.setAttribute('width', '100%');
     background.setAttribute('height', '100%');
     background.setAttribute('fill', '#FFFFFF');
     svg.appendChild(background);
 
-    // Get current color and pattern
+    // Current color and pattern
     const qrColor = document.querySelector('.color-preset.active')?.dataset.color ||
         document.getElementById('qr-color')?.value ||
         '#000000';
